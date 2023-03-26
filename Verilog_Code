@@ -1,0 +1,40 @@
+#include<reg52.h>    // Include the header file for 8051 microcontroller
+
+sbit IR1 = P2^0;    // Define input pin for IR sensor 1
+sbit IR2 = P2^1;    // Define input pin for IR sensor 2
+sbit LED = P1^0;    // Define output pin for LED
+
+unsigned int count = 0;    // Initialize counter to 0
+
+void delay(unsigned int time)    // Delay function to provide a delay of specified time
+{
+    unsigned int i,j;
+    for(i=0;i<time;i++)
+        for(j=0;j<1275;j++);
+}
+
+void main()
+{
+    IE = 0x85;    // Enable external interrupts
+    IT0 = 1;    // Configure INT0 to be edge-triggered
+    IT1 = 1;    // Configure INT1 to be edge-triggered
+    EA = 1;    // Enable global interrupts
+
+    while(1)    // Loop forever
+    {
+        LED = 1;    // Turn on LED
+        delay(1000);    // Wait for 1 second
+        LED = 0;    // Turn off LED
+        delay(1000);    // Wait for 1 second
+    }
+}
+
+void ISR_IR1(void) interrupt 0    // Interrupt service routine for IR sensor 1
+{
+    count++;    // Increment the count variable
+}
+
+void ISR_IR2(void) interrupt 2    // Interrupt service routine for IR sensor 2
+{
+    count--;    // Decrement the count variable
+}
